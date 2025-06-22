@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <title>批量生成 HTML 代码工具</title>
+  <style>
+    body {
+      font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+      margin: 30px;
+      background-color: #f7f7f7;
+      color: #333;
+    }
+    h2 {
+      margin-bottom: 20px;
+    }
+    .input-container {
+      display: flex;
+      gap: 20px;
+      margin-bottom: 20px;
+    }
+    textarea {
+      flex: 1;
+      height: 400px;
+      padding: 12px;
+      resize: none;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+      box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.1);
+      background-color: #fff;
+      font-family: monospace;
+    }
+    .button-group {
+      margin-top: 10px;
+    }
+    button {
+      padding: 10px 20px;
+      margin-right: 10px;
+      border: none;
+      background-color: #4CAF50;
+      color: white;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 15px;
+    }
+    button:hover {
+      background-color: #45a049;
+    }
+    #output {
+      width: 100%;
+      height: 400px;
+      margin-top: 20px;
+      padding: 12px;
+      white-space: pre-wrap;
+      border: 1px solid #aaa;
+      border-radius: 6px;
+      background-color: #fefefe;
+      overflow-y: auto;
+      font-family: monospace;
+    }
+  </style>
+</head>
+<body>
+  <h2>📦 批量生成 HTML 代码工具</h2>
+
+  <div class="input-container">
+    <textarea id="textInput" placeholder="每行一个文本，例如：商品描述"></textarea>
+    <textarea id="urlInput" placeholder="每行一个网址链接，例如：https://example.com"></textarea>
+    <textarea id="imgInput" placeholder="每行一个图片链接，例如：https://img.com/1.jpg"></textarea>
+  </div>
+
+  <div class="button-group">
+    <button onclick="generateHTML()">⚙️ 生成 HTML</button>
+    <button onclick="copyOutput()">📋 复制结果</button>
+    <button onclick="downloadHTML()">💾 导出为 .html 文件</button>
+  </div>
+
+  <pre id="output" placeholder="生成结果会显示在这里..."></pre>
+
+  <script>
+    function generateHTML() {
+      const texts = document.getElementById('textInput').value.trim().split('\n');
+      const urls = document.getElementById('urlInput').value.trim().split('\n');
+      const imgs = document.getElementById('imgInput').value.trim().split('\n');
+
+      let result = '';
+      const max = Math.max(texts.length, urls.length, imgs.length);
+
+      for (let i = 0; i < max; i++) {
+        const text = texts[i] || '';
+        const url = urls[i] || '#';
+        const img = imgs[i] || '';
+
+        result += `<b>${text}</b>\n<a href="${url}" target="_blank" rel="nofollow noopener">\n  <img src="${img}">\n</a>\n\n`;
+      }
+
+      const outputBox = document.getElementById('output');
+      outputBox.textContent = result.trim();
+      outputBox.scrollTop = outputBox.scrollHeight;
+    }
+
+    function copyOutput() {
+      const output = document.getElementById('output');
+      navigator.clipboard.writeText(output.textContent)
+        .then(() => alert('✅ 已复制到剪贴板！'))
+        .catch(err => alert('❌ 复制失败：' + err));
+    }
+
+    function downloadHTML() {
+      const blob = new Blob([document.getElementById('output').textContent], { type: 'text/html' });
+      const a = document.createElement('a');
+      a.href = URL.createObjectURL(blob);
+      a.download = 'generated_code.html';
+      a.click();
+    }
+  </script>
+</body>
+</html>
